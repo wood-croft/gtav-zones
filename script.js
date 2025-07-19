@@ -140,9 +140,9 @@ let labelPositions = {
 let imageLoaded = false;
 let regionsLoaded = false;
 
-// Show loading spinner
-const spinner = document.getElementById("loading");
-spinner.style.display = "block";
+// Show loading
+const loading = document.getElementById("loading");
+loading.style.display = "block";
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -260,7 +260,7 @@ mapImage.onload = () => {
   offsetY = (canvas.height - mapImage.height * scale) / 2;
 
   if (regionsLoaded) {
-    spinner.style.display = "none";
+    loading.style.display = "none";
     draw();
   }
 };
@@ -271,7 +271,7 @@ fetch("zones-bounds-pixels.txt")
     parseRegions(text);
     regionsLoaded = true;
     if (imageLoaded) {
-      spinner.style.display = "none";
+      loading.style.display = "none";
       draw();
     }
   });
@@ -367,6 +367,7 @@ mapRadioButtons.forEach(radio => {
   radio.addEventListener("change", () => {
     if (radio.checked) {
       currentMapIndex = parseInt(radio.value);
+      loading.style.display = "block";
       mapImage.src = mapSources[currentMapIndex];
       const wrapper = document.getElementById("canvasWrapper");
       wrapper.style.backgroundColor = mapBackgrounds[currentMapIndex];
