@@ -2,9 +2,12 @@ const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
 
 const mapSources = ["gtav-satellite-map.jpg", "gtav-game-map.jpg"];
+const mapBackgrounds = ["#0D2B4F", "#384950"];
 let currentMapIndex = 0;
 const mapImage = new Image();
 mapImage.src = mapSources[currentMapIndex];
+document.getElementById("canvasWrapper").style.backgroundColor = mapBackgrounds[currentMapIndex];
+document.body.style.backgroundColor = mapBackgrounds[currentMapIndex];
 
 let dynamicFont = true;
 let scale = 0.30; // Initial zoom level
@@ -85,14 +88,14 @@ let labelPositions = {
   "Richman": [897.709, 2955.914],
   "Del Perro": [957.611, 3288.877],
   "Redwood Lights Track": [1883.639, 2220.706],
-  "La Puerta 2": [1185.378, 3593.61],
+  "La Puerta 2": [1185.378, 3573.61],
   "Rancho": [1656.359, 3728.068],
   "Vespucci Canals": [1122.451, 3434.037],
   "East Vinewood": [1831.826, 3150.44],
   "Galileo Park": [1740.578, 2596.661],
   "Banning": [1539.76, 3870.626],
   "Burton": [1401.056, 3125.574],
-  "Vespucci Beach": [1031.502, 3588.164],
+  "Vespucci Beach": [1031.502, 3608.164],
   "Del Perro Beach": [894.783, 3404.198],
   "Davis": [1548.028, 3695.231],
   "Palmer-Taylor Power Station": [2502.256, 2504.913],
@@ -352,15 +355,24 @@ canvas.addEventListener("mouseleave", () => {
   isDragging = false;
 });
 
-document.getElementById("toggleNames").addEventListener("click", () => {
-  showNames = !showNames;
-  dynamicFont = showNames;
+const toggleNamesCheckbox = document.getElementById("toggleNamesCheckbox");
+const mapRadioButtons = document.querySelectorAll('input[name="map"]');
+
+toggleNamesCheckbox.addEventListener("change", () => {
+  showNames = toggleNamesCheckbox.checked;
   draw();
 });
 
-document.getElementById("toggleMap").addEventListener("click", () => {
-  currentMapIndex = (currentMapIndex + 1) % mapSources.length;
-  mapImage.src = mapSources[currentMapIndex];
+mapRadioButtons.forEach(radio => {
+  radio.addEventListener("change", () => {
+    if (radio.checked) {
+      currentMapIndex = parseInt(radio.value);
+      mapImage.src = mapSources[currentMapIndex];
+      const wrapper = document.getElementById("canvasWrapper");
+      wrapper.style.backgroundColor = mapBackgrounds[currentMapIndex];
+      document.body.style.backgroundColor = mapBackgrounds[currentMapIndex];
+    }
+  });
 });
 
 resizeCanvas();
