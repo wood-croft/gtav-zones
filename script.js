@@ -1,8 +1,10 @@
 const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
 
-let image = new Image();
-image.src = "gtav-zones-base.jpg";
+const mapSources = ["gtav-satellite-map.jpg", "gtav-game-map.jpg"];
+let currentMapIndex = 0;
+const mapImage = new Image();
+mapImage.src = mapSources[currentMapIndex];
 
 let dynamicFont = true;
 let scale = 0.30; // Initial zoom level
@@ -29,6 +31,10 @@ let labelShadowColor = "black";
 let labelShadowBlur = 2;
 let labelShadowOffsetX = 1;
 let labelShadowOffsetY = 1;
+let nonHoveredStrokeStyle = "red";
+let nonHoveredLineWidth = 1;
+let hoveredStrokeStyle = "gold";
+let hoveredLineWidth = 3;
 
 let labelPositions = {
   "North Yankton": [2700, 4630],
@@ -170,10 +176,12 @@ function parseRegions(text) {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(image, offsetX, offsetY, image.width * scale, image.height * scale);
+  ctx.drawImage(mapImage, offsetX, offsetY, mapImage.width * scale, mapImage.height * scale);
 
+  // Non-hovered
   for (const [name, coords] of Object.entries(regions)) {
     if (coords.length < 2) continue;
+    if (name === hoveredRegion) continue;
 
     ctx.beginPath();
     const [startX, startY] = worldToScreen(...coords[0]);
@@ -184,15 +192,30 @@ function draw() {
     }
     ctx.closePath();
 
-    if (name === hoveredRegion) {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-      ctx.fill();
-      ctx.strokeStyle = "orange";
-      ctx.lineWidth = 3;
-    } else {
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 1;
+    ctx.strokeStyle = nonHoveredStrokeStyle;
+    ctx.lineWidth = nonHoveredLineWidth;
+
+    ctx.stroke();
+  }
+
+  // Hovered
+  for (const [name, coords] of Object.entries(regions)) {
+    if (coords.length < 2) continue;
+    if (name !== hoveredRegion) continue;
+
+    ctx.beginPath();
+    const [startX, startY] = worldToScreen(...coords[0]);
+    ctx.moveTo(startX, startY);
+    for (const [x, y] of coords.slice(1)) {
+      const [sx, sy] = worldToScreen(x, y);
+      ctx.lineTo(sx, sy);
     }
+    ctx.closePath();
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    ctx.fill();
+    ctx.strokeStyle = hoveredStrokeStyle;
+    ctx.lineWidth = hoveredLineWidth;
 
     ctx.stroke();
   }
@@ -226,12 +249,12 @@ function draw() {
 
 }
 
-image.onload = () => {
+mapImage.onload = () => {
   imageLoaded = true;
 
   // Center the image initially
-  offsetX = (canvas.width - image.width * scale) / 2;
-  offsetY = (canvas.height - image.height * scale) / 2;
+  offsetX = (canvas.width - mapImage.width * scale) / 2;
+  offsetY = (canvas.height - mapImage.height * scale) / 2;
 
   if (regionsLoaded) {
     spinner.style.display = "none";
@@ -333,6 +356,11 @@ document.getElementById("toggleNames").addEventListener("click", () => {
   showNames = !showNames;
   dynamicFont = showNames;
   draw();
+});
+
+document.getElementById("toggleMap").addEventListener("click", () => {
+  currentMapIndex = (currentMapIndex + 1) % mapSources.length;
+  mapImage.src = mapSources[currentMapIndex];
 });
 
 resizeCanvas();
