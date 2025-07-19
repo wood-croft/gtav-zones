@@ -6,13 +6,28 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="canvasWrapper">
+    <canvas id="mapCanvas"></canvas>
+  </div>
   <canvas id="mapCanvas"></canvas>
   <div id="loading">Loading map...</div>
   <div id="controls">
-    <button id="toggleNames">Toggle Show All Names</button>
-    <button id="toggleMap">Toggle Map</button>
+    <label>
+      <input type="checkbox" id="toggleNamesCheckbox" checked>
+      Show All Names
+    </label>
+    <fieldset id="mapSelector">
+      <legend>Map Type</legend>
+      <label>
+        <input type="radio" name="map" value="0" checked>
+        Satellite
+      </label>
+      <label>
+        <input type="radio" name="map" value="1">
+        Game
+      </label>
+    </fieldset>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
