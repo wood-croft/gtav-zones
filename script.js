@@ -5,10 +5,10 @@ let image = new Image();
 image.src = "gtav-zones-base.jpg";
 
 let dynamicFont = true;
-let scale = 0.30;              // Initial zoom level
+let scale = 0.30; // Initial zoom level
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
-let offsetX = 0;              // Will be centered later
+let offsetX = 0; // Will be centered later
 let offsetY = 0;
 let isDragging = false;
 let dragStart = { x: 0, y: 0 };
@@ -18,12 +18,24 @@ let hoveredRegion = null;
 let mouseX = 0;
 let mouseY = 0;
 
+let labelFontFamily = "'Verdana', 'Arial', sans-serif";
+let labelFontSize = 18; // in px
+let labelFontWeight = "normal";
+let labelColor = "white";
+let labelHighlightColor = "yellow";
+let labelStrokeStyle = "black";
+let labelLineWidth = 2;
+let labelShadowColor = "black";
+let labelShadowBlur = 2;
+let labelShadowOffsetX = 1;
+let labelShadowOffsetY = 1;
+
 let labelPositions = {
   "North Yankton": [2700, 4630],
   "Cayo Perico": [2700, 4570],
   "Mount Chiliad": [1834.469, 1076.511],
   "Vinewood Hills": [1519.973, 2687.69],
-  "Grand Senora Desert": [1927.798, 2100.477],
+  "Grand Senora Desert": [1927.798, 2080.477],
   "Tataviam Mountains": [2289.525, 2884.698],
   "San Chianski Mountain Range": [2696.908, 1607.85],
   "Los Santos International Airport": [1034.362, 4053.95],
@@ -31,7 +43,7 @@ let labelPositions = {
   "Mount Josiah": [1116.564, 1760.843],
   "Alamo Sea": [1880.189, 1578.604],
   "Fort Zancudo": [717.219, 1923.67],
-  "Mount Gordo": [2489.36, 901.288],
+  "Mount Gordo": [2539.36, 881.288],
   "Great Chaparral": [1269.353, 2241.494],
   "Elysian Island": [1528.703, 4107.461],
   "Ron Alternates Wind Farm": [2396.276, 2330.006],
@@ -64,7 +76,7 @@ let labelPositions = {
   "Strawberry": [1523.784, 3543.226],
   "Mirror Park 1": [1918.905, 3258.995],
   "Tongva Valley": [982.239, 2397.579],
-  "Richman": [897.709, 2985.914],
+  "Richman": [897.709, 2955.914],
   "Del Perro": [957.611, 3288.877],
   "Redwood Lights Track": [1883.639, 2220.706],
   "La Puerta 2": [1185.378, 3593.61],
@@ -156,13 +168,6 @@ function parseRegions(text) {
 }
 
 
-const labelEl = document.getElementById("labelStyle");
-const labelStyle = window.getComputedStyle(labelEl);
-
-const font = `${labelStyle.fontWeight} ${labelStyle.fontSize} ${labelStyle.fontFamily}`;
-const fillStyle = labelStyle.color;
-
-
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(image, offsetX, offsetY, image.width * scale, image.height * scale);
@@ -192,22 +197,20 @@ function draw() {
     ctx.stroke();
   }
 
-  ctx.fillStyle = "white";
-  ctx.font = "14px Helvetica";
-  const baseSize = parseFloat(labelStyle.fontSize); // from CSS, like 16px
-  const zoomedSize = dynamicFont ? baseSize * scale : baseSize;
-  ctx.font = `${labelStyle.fontWeight} ${zoomedSize}px ${labelStyle.fontFamily}`;
-
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 2;
+  let zoomedSize = dynamicFont ? labelFontSize * scale * 1.5 : labelFontSize;
+  ctx.font = `${labelFontWeight} ${zoomedSize}px ${labelFontFamily}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.shadowColor = "black";
-  ctx.shadowBlur = 4;
-  ctx.shadowOffsetX = 2;
-  ctx.shadowOffsetY = 2;
+  ctx.strokeStyle = labelStrokeStyle;
+  ctx.lineWidth = labelLineWidth;
+  ctx.shadowColor = labelShadowColor;
+  ctx.shadowBlur = labelShadowBlur;
+  ctx.shadowOffsetX = labelShadowOffsetX;
+  ctx.shadowOffsetY = labelShadowOffsetY;
   for (const [name, coords] of Object.entries(regions)) {
     if (coords.length < 2) continue;
+
+    ctx.fillStyle = (showNames && name == hoveredRegion)? labelHighlightColor : labelColor;
 
     if ((showNames || name == hoveredRegion) && labelPositions[name]) {
       const [lx, ly] = worldToScreen(...labelPositions[name]);
@@ -259,9 +262,7 @@ canvas.addEventListener("wheel", (e) => {
   const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
   const newScale = scale * zoomFactor;
 
-  // Clamp the new scale
   if (newScale >= MIN_ZOOM && newScale <= MAX_ZOOM) {
-    // Optional: zoom toward mouse pointer
     const mouseX = e.offsetX;
     const mouseY = e.offsetY;
     const wx = (mouseX - offsetX) / scale;
@@ -269,7 +270,6 @@ canvas.addEventListener("wheel", (e) => {
 
     scale = newScale;
 
-    // Adjust offset to keep zoom centered around cursor
     offsetX = mouseX - wx * scale;
     offsetY = mouseY - wy * scale;
 
@@ -329,14 +329,10 @@ canvas.addEventListener("mouseleave", () => {
   isDragging = false;
 });
 
-
-// Toggle name visibility
 document.getElementById("toggleNames").addEventListener("click", () => {
   showNames = !showNames;
   dynamicFont = showNames;
   draw();
 });
 
-// Initial resize
 resizeCanvas();
-
