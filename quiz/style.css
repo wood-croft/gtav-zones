@@ -1,0 +1,121 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+#canvasWrapper {
+  width: 100vw;
+  height: 100vh;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 20px 30px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-family: sans-serif;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+#controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+#mapSelector {
+  border: none;
+  padding: 0;
+  padding-top: 5px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#mapSelectorTitle {
+  font-weight: bold;
+  padding-top: 5px;
+}
+#scoreBox {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 8px;
+  font-family: Courier New, sans-serif;
+}
+#scoreTitle {
+  text-align: center;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+#score {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  gap: 12px;
+}
+#zoneToGuess {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: rgba(200, 200, 200, 0.85);
+  padding: 20px 30px;
+  border-radius: 20px;
+  font-size: 20px;
+  font-family: Verdana, Arial, sans-serif;
+  font-weight: bold;
+  color: gold;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+  z-index: 100;
+  display: block;
+  box-shadow: 0 0 5px black;
+}
