@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GTA V Zones Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="canvasWrapper">
+    <canvas id="mapCanvas"></canvas>
+  </div>
+  <canvas id="mapCanvas"></canvas>
+  <div id="loading">Loading map...</div>
+  <div id="controls">
+    <label>
+      <input type="checkbox" id="toggleNamesCheckbox">
+      Show Answer
+    </label>
+    <fieldset id="mapSelector">
+      <legend id="mapSelectorTitle">Map Type</legend>
+      <label>
+        <input type="radio" name="map" value="0" checked>
+        Satellite
+      </label>
+      <label>
+        <input type="radio" name="map" value="1">
+        Game
+      </label>
+    </fieldset>
+  </div>
+  <div id="scoreBox">
+    <label id="scoreTitle">Score</label>
+    <div id="score"></div>
+  </div>
+  <div id="zoneToGuess"></div>
+  <script src="script.js"></script>
+</body>
+</html>
