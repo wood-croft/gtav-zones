@@ -36,10 +36,13 @@ html, body {
 #controls {
   position: fixed;
   top: 20px;
-  left: 20px;
+  right: 20px;
+  border: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
   border-radius: 8px;
@@ -49,8 +52,13 @@ html, body {
 #mapSelector {
   border: none;
   padding: 0;
+  padding-top: 5px;
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+#mapSelectorTitle {
+  font-weight: bold;
+  padding-top: 5px;
 }
