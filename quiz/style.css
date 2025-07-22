@@ -38,7 +38,70 @@ html, body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Reusable styling for all floating boxes */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+}
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #bbb;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border: 1px solid gray;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 1px;
+  bottom: 1px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(14px);
+  transform: translateX(14px);
+}
+.slider.round {
+  border-radius: 20px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+.panelBoxGold {
+  background: rgba(255, 215, 0, 0.8);
+  padding: 10px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .panelBox {
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
@@ -48,8 +111,9 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  border: 1px solid black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-/* Align the column to the top-right corner */
 #rightColumn {
   position: fixed;
   top: 20px;
@@ -68,7 +132,7 @@ html, body {
 }
 #mapSelectorTitle {
   font-weight: bold;
-  padding-top: 5px;
+  padding-top: 0px;
 }
 
 #resetButton {
