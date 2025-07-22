@@ -568,10 +568,9 @@ canvas.addEventListener("mouseup", () => {
         }
         else if (firstTry)
           isZoneClicked[name] = "correct";
-        else {
-          firstTry = true;
+        else
           isZoneClicked[name] = "correctNotFirst";
-        }
+        firstTry = true;
           
         setNextZoneToGuess();
       }
