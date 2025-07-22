@@ -151,8 +151,12 @@ html, body {
   color: gold;
   text-shadow:
     -1px -1px 0 #000,
-     1px -1px 0 #000,
+    -1px  0px 0 #000,
     -1px  1px 0 #000,
+     0px -1px 0 #000,
+     0px  1px 0 #000,
+     1px -1px 0 #000,
+     1px  0px 0 #000,
      1px  1px 0 #000;
   box-shadow: 0 0 5px black;
   z-index: 100;
