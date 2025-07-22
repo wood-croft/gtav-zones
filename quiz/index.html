@@ -5,34 +5,56 @@
   <title>GTA V Zones Quiz</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div id="canvasWrapper">
     <canvas id="mapCanvas"></canvas>
   </div>
   <canvas id="mapCanvas"></canvas>
   <div id="loading">Loading map...</div>
-  <div id="controls">
-    <label>
-      <input type="checkbox" id="toggleNamesCheckbox">
-      Show Answer
-    </label>
-    <fieldset id="mapSelector">
-      <legend id="mapSelectorTitle">Map Type</legend>
+  
+  <div id="rightColumn">
+    <div id="controls" class="panelBox">
       <label>
-        <input type="radio" name="map" value="0" checked>
-        Satellite
+        <input type="checkbox" id="toggleNamesCheckbox">
+        Show Answer
       </label>
-      <label>
-        <input type="radio" name="map" value="1">
-        Game
-      </label>
-    </fieldset>
+      <fieldset id="mapSelector">
+        <legend id="mapSelectorTitle">Map Type</legend>
+        <label>
+          <input type="radio" name="map" value="0" checked>
+          Satellite
+        </label>
+        <label>
+          <input type="radio" name="map" value="1">
+          Game
+        </label>
+      </fieldset>
+    </div>
+    
+    <input type="submit" value="Restart Quiz" id="resetButton" onclick="restartQuiz()" />
+    
   </div>
-  <div id="scoreBox">
-    <label id="scoreTitle">Score</label>
-    <div id="score"></div>
+  <div id="leftColumn">
+    <div id="scoreBox" class="infoBox">
+      <h2 id="scoreTitle">Score</h2>
+      <div id="score"></div>
+    </div>
+    <div id="timer" class="infoBox">00:00</div>
   </div>
+  
   <div id="zoneToGuess"></div>
+  
+  <div id="confirmOverlay">
+    <div id="confirmBox">
+      <p>Prepare to start...</p>
+      <div class="confirmButtons">
+        <button id="confirmReady">Ready</button>
+        <button id="confirmCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
