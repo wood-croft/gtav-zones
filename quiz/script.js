@@ -12,6 +12,7 @@ mapImage.src = mapSources[currentMapIndex];
 document.getElementById("canvasWrapper").style.backgroundColor = mapBackgrounds[currentMapIndex];
 document.body.style.backgroundColor = mapBackgrounds[currentMapIndex];
 const toggleNamesCheckbox = document.getElementById("toggleNamesCheckbox");
+const toggleBordersCheckbox = document.getElementById("toggleBordersCheckbox");
 const mapRadioButtons = document.querySelectorAll('input[name="map"]');
 
 let dynamicFont = true;
@@ -261,6 +262,8 @@ function parseRegions(text) {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(mapImage, offsetX, offsetY, mapImage.width * scale, mapImage.height * scale);
+  
+  let showBorders = toggleBordersCheckbox.checked;
 
   // Non-hovered, clicked
   for (const [name, coords] of Object.entries(regions)) {
@@ -311,6 +314,7 @@ function draw() {
     if (coords.length < 2) continue;
     if (name === hoveredRegion) continue;
     if (isZoneClicked[name]) continue;
+    if (!showBorders) continue;
 
     ctx.beginPath();
     const [startX, startY] = worldToScreen(...coords[0]);
@@ -332,6 +336,7 @@ function draw() {
     if (coords.length < 2) continue;
     if (isZoneClicked[name]) continue;
     if (name !== hoveredRegion) continue;
+    if (!showBorders) continue;
 
     ctx.beginPath();
     const [startX, startY] = worldToScreen(...coords[0]);
@@ -627,6 +632,10 @@ toggleNamesCheckbox.addEventListener("change", () => {
   showNames = quizStarted ? toggleNamesCheckbox.checked : false;
   if (showNames)
     zoneRevealed = true;
+  draw();
+});
+
+toggleBordersCheckbox.addEventListener("change", () => {
   draw();
 });
 
