@@ -209,9 +209,21 @@ function setNextZoneToGuess() {
   document.getElementById("zoneToGuess").innerHTML = zoneToGuess;
 }
 
+function changeCursor(newCursor) {
+  if (newCursor == "middle-finger") {
+    canvas.style.cursor = "";
+    canvas.classList.add("middle-finger");
+  }
+  else {
+    canvas.classList.remove("middle-finger");
+    canvas.style.cursor = newCursor;
+  }
+}
+
 // Show loading
 const loading = document.getElementById("loading");
 loading.style.display = "block";
+changeCursor("wait");
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -456,6 +468,7 @@ mapImage.onload = () => {
 
   if (regionsLoaded) {
     loading.style.display = "none";
+    changeCursor("grab");
     if (isFirstTime && !quizStarted)
       restartQuiz();
     else
@@ -470,6 +483,7 @@ fetch("zones-bounds-pixels.txt")
     regionsLoaded = true;
     if (imageLoaded) {
       loading.style.display = "none";
+      changeCursor("grab");
       if (isFirstTime && !quizStarted)
         restartQuiz();
       else
@@ -512,12 +526,15 @@ canvas.addEventListener("wheel", (e) => {
 canvas.addEventListener("mousedown", (e) => {
   isClicked = true;
   dragStart = { x: e.clientX, y: e.clientY };
+  if (canvas.style.cursor == "grab")
+    changeCursor("grabbing");
 });
 
 canvas.addEventListener("mousemove", (e) => {
   if (isClicked)
     isDragging = true;
   if (isDragging) {
+    changeCursor("grabbing");
     offsetX += e.clientX - dragStart.x;
     offsetY += e.clientY - dragStart.y;
     dragStart = { x: e.clientX, y: e.clientY };
@@ -542,9 +559,15 @@ canvas.addEventListener("mousemove", (e) => {
 
       if (ctx.isPointInPath(poly, mouseX, mouseY)) {
         hoveredRegion = name;
+        if (isZoneClicked[hoveredRegion] == false)
+          changeCursor("middle-finger");
+        else
+          changeCursor("grab");
         break;
       }
     }
+    if (hoveredRegion == null)
+      changeCursor("grab");
     draw();
   }
 });
@@ -553,6 +576,7 @@ canvas.addEventListener("mouseup", () => {
   isClicked = false;
   if (isDragging) {
     isDragging = false;
+    changeCursor("grab");
     return;
   }
   for (const [name, coords] of Object.entries(regions).reverse()) {
@@ -566,6 +590,7 @@ canvas.addEventListener("mouseup", () => {
     poly.closePath();
 
     if (ctx.isPointInPath(poly, mouseX, mouseY)) {
+      changeCursor("grab");
       if (name == zoneToGuess) {
         if (zoneRevealed) {
           isZoneClicked[name] = "revealed";
@@ -610,6 +635,7 @@ mapRadioButtons.forEach(radio => {
     if (radio.checked) {
       currentMapIndex = parseInt(radio.value);
       loading.style.display = "block";
+      changeCursor("wait");
       mapImage.src = mapSources[currentMapIndex];
       const wrapper = document.getElementById("canvasWrapper");
       wrapper.style.backgroundColor = mapBackgrounds[currentMapIndex];
