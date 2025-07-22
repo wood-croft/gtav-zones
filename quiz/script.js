@@ -1,4 +1,5 @@
 let quizStarted = false;
+let isFirstTime = true;
 
 const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
@@ -395,11 +396,16 @@ function updateTimer() {
   }, 100);
 }
 
-
 function showConfirm(message, onConfirm) {
   const overlay = document.getElementById("confirmOverlay");
   const box = document.getElementById("confirmBox");
   box.querySelector("p").textContent = message;
+
+  const readyBtn = document.getElementById("confirmReady");
+  const cancelBtn = document.getElementById("confirmCancel");
+
+  // Only show Cancel button if not the first time
+  cancelBtn.style.display = isFirstTime ? "none" : "inline-block";
 
   overlay.style.display = "flex";
 
@@ -408,13 +414,13 @@ function showConfirm(message, onConfirm) {
     readyBtn.removeEventListener("click", confirmHandler);
     cancelBtn.removeEventListener("click", cancelHandler);
   }
-  const readyBtn = document.getElementById("confirmReady");
-  const cancelBtn = document.getElementById("confirmCancel");
 
   function confirmHandler() {
     cleanup();
+    isFirstTime = false; // mark that we've shown it once
     onConfirm(true);
   }
+
   function cancelHandler() {
     cleanup();
     onConfirm(false);
