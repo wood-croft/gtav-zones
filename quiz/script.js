@@ -54,7 +54,7 @@ let labelPositions = {
 //  "North Yankton": [2700, 4630],
   "Cayo Perico": [2700, 4570],
   "Mount Chiliad": [1834.469, 1076.511],
-  "Vinewood Hills": [1519.973, 2687.69],
+  /*"Vinewood Hills": [1519.973, 2687.69],
   "Grand Senora Desert": [1927.798, 2080.477],
   "Tataviam Mountains": [2289.525, 2884.698],
   "San Chianski Mountain Range": [2696.908, 1607.85],
@@ -145,7 +145,7 @@ let labelPositions = {
   "Braddock Tunnel": [2325.995, 905.563],
   "Land Act Dam": [2113.645, 3063.529],
   "Calafia Bridge": [1446.479, 1514.126],
-  "Port of South Los Santos": [1450.301, 3840.179],
+  "Port of South Los Santos": [1450.301, 3840.179],*/
 };
 
 var startTime = new Date();
@@ -434,6 +434,7 @@ function restartQuiz() {
   draw();
   showConfirm("Prepare to start...", function(confirmed) {
     if (!confirmed) return;
+    toggleNamesCheckbox.checked = false;
     isZoneClicked = {};
     for (const name of Object.keys(labelPositions))
       isZoneClicked[name] = false;
@@ -455,7 +456,7 @@ mapImage.onload = () => {
 
   if (regionsLoaded) {
     loading.style.display = "none";
-    if (!quizStarted)
+    if (isFirstTime && !quizStarted)
       restartQuiz();
     else
       draw();
@@ -469,7 +470,7 @@ fetch("zones-bounds-pixels.txt")
     regionsLoaded = true;
     if (imageLoaded) {
       loading.style.display = "none";
-      if (!quizStarted)
+      if (isFirstTime && !quizStarted)
         restartQuiz();
       else
         draw();
@@ -485,7 +486,7 @@ canvas.addEventListener("wheel", (e) => {
   const worldX = (mouseX - offsetX) / scale;
   const worldY = (mouseY - offsetY) / scale;
 
-  const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+  const zoomFactor = e.deltaY > 0 ? 1/1.2 : 1.2;
   const newScale = scale * zoomFactor;
 
   if (newScale >= MIN_ZOOM && newScale <= MAX_ZOOM) {
@@ -598,7 +599,7 @@ canvas.addEventListener("mouseleave", () => {
 });
 
 toggleNamesCheckbox.addEventListener("change", () => {
-  showNames = toggleNamesCheckbox.checked;
+  showNames = quizStarted ? toggleNamesCheckbox.checked : false;
   if (showNames)
     zoneRevealed = true;
   draw();
