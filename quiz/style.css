@@ -2,15 +2,18 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
 canvas {
   display: block;
 }
+
 html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
   height: 100%;
 }
+
 #canvasWrapper {
   width: 100vw;
   height: 100vh;
@@ -19,6 +22,7 @@ html, body {
   justify-content: center;
   align-items: center;
 }
+
 #loading {
   position: absolute;
   top: 50%;
@@ -33,27 +37,31 @@ html, body {
   display: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
-#controls {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  border: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+
+/* Reusable styling for all floating boxes */
+.panelBox {
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
   border-radius: 8px;
   font-family: sans-serif;
   font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* Align the column to the top-right corner */
+#rightColumn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* gap between panel and reset button */
 }
 #mapSelector {
   border: none;
-  padding: 0;
-  padding-top: 5px;
   margin: 0;
+  padding: 5px 0 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -62,47 +70,78 @@ html, body {
   font-weight: bold;
   padding-top: 5px;
 }
-#scoreBox {
+
+#resetButton {
+  padding: 8px 12px;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  background-color: #c9302c;
+  color: white;
+  border: 1px solid black;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+#resetButton:hover {
+  background-color: #a82825;
+}
+#resetButton:active {
+  transform: scale(0.97);
+}
+
+
+#leftColumn {
   position: fixed;
   top: 20px;
   left: 20px;
-  border: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px; /* gap between scoreBox and timer */
+}
+.infoBox {
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
   border-radius: 8px;
-  font-family: Courier New, sans-serif;
+  border: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+#scoreBox {
+  gap: 4px;
+  font-family: "Courier New", sans-serif;
 }
 #scoreTitle {
   text-align: center;
-  border: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
   font-size: 18px;
   font-weight: bold;
+  margin: 0;
   padding-bottom: 5px;
 }
 #score {
-  border: none;
-  padding: 0;
-  margin: 0;
+  font-size: 16px;
   display: flex;
   flex-direction: column;
-  font-size: 16px;
   gap: 12px;
+  margin: 0;
+  padding: 0;
 }
+#timer {
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  font-size: 28px;
+  text-align: center;
+  padding: 2px;
+}
+
 #zoneToGuess {
   position: absolute;
   top: 5px;
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translateX(-50%);
   background: rgba(200, 200, 200, 0.85);
   padding: 20px 30px;
   border-radius: 20px;
@@ -112,10 +151,57 @@ html, body {
   color: gold;
   text-shadow:
     -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-  z-index: 100;
-  display: block;
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
   box-shadow: 0 0 5px black;
+  z-index: 100;
+  display: none;
+}
+
+#confirmOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+#confirmBox {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+.confirmButtons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.confirmButtons button {
+  padding: 6px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#confirmReady {
+  background-color: #4caf50;
+  color: white;
+}
+#confirmCancel {
+  background-color: #f44336;
+  color: white;
+}
+
+@font-face{
+  font-family: "unispace-bold";
+  src: url('fonts/unispace.bold.otf');
 }
