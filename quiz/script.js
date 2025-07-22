@@ -1,3 +1,5 @@
+let quizStarted = false;
+
 const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -8,6 +10,8 @@ const mapImage = new Image();
 mapImage.src = mapSources[currentMapIndex];
 document.getElementById("canvasWrapper").style.backgroundColor = mapBackgrounds[currentMapIndex];
 document.body.style.backgroundColor = mapBackgrounds[currentMapIndex];
+const toggleNamesCheckbox = document.getElementById("toggleNamesCheckbox");
+const mapRadioButtons = document.querySelectorAll('input[name="map"]');
 
 let dynamicFont = true;
 let scale = 0.30; // Initial zoom level
@@ -37,7 +41,8 @@ let labelShadowOffsetX = 1;
 let labelShadowOffsetY = 1;
 let nonHoveredStrokeStyle = "yellow";
 let nonHoveredLineWidth = 1;
-let correctStrokeStyle = "LawnGreen";
+let correctStrokeStyle = "lawngreen";
+let correctNotFirstStrokeStyle = "blue";
 let wrongStrokeStyle = "red";
 let revealedStrokeStyle = "gold";
 let clickedLineWidth = 3;
@@ -142,6 +147,9 @@ let labelPositions = {
   "Port of South Los Santos": [1450.301, 3840.179],
 };
 
+var startTime = new Date();
+var endTime = new Date();
+
 let imageLoaded = false;
 let regionsLoaded = false;
 
@@ -162,7 +170,7 @@ function updateScore() {
   let correct = 0;
   let wrong = 0;
   for (const name of Object.keys(labelPositions)) {
-    if (isZoneClicked[name] == "correct")
+    if (isZoneClicked[name] == "correct" || isZoneClicked[name] == "correctNotFirst")
       correct += 1;
     if (isZoneClicked[name] == "wrong" || isZoneClicked[name] == "revealed")
       wrong += 1;
@@ -180,6 +188,7 @@ updateScore();
 let remainingZones = Object.keys(labelPositions);
 let zoneToGuess;
 let zoneRevealed = false;
+let firstTry = true;
 
 function removeZoneToGuess(name) {
   var index = remainingZones.indexOf(name);
@@ -188,15 +197,16 @@ function removeZoneToGuess(name) {
 }
 function setNextZoneToGuess() {
   if (remainingZones.length == 0) {
+    quizStarted = false;
     document.getElementById("zoneToGuess").innerHTML = "Finished!";
     return;
   }
   let zoneIndexToGuess = Math.floor(Math.random() * remainingZones.length);
   zoneToGuess = remainingZones[zoneIndexToGuess];
   remainingZones.splice(zoneIndexToGuess, 1);
+  document.getElementById("zoneToGuess").style.display = "block";
   document.getElementById("zoneToGuess").innerHTML = zoneToGuess;
 }
-setNextZoneToGuess();
 
 // Show loading
 const loading = document.getElementById("loading");
@@ -258,6 +268,10 @@ function draw() {
         ctx.fillStyle = correctStrokeStyle;
         ctx.strokeStyle = correctStrokeStyle;
         break;
+      case "correctNotFirst":
+        ctx.fillStyle = correctNotFirstStrokeStyle;
+        ctx.strokeStyle = correctNotFirstStrokeStyle;
+        break;
       case "wrong":
         ctx.fillStyle = wrongStrokeStyle;
         ctx.strokeStyle = wrongStrokeStyle;
@@ -265,7 +279,10 @@ function draw() {
       case "revealed":
         ctx.fillStyle = revealedStrokeStyle;
         ctx.strokeStyle = revealedStrokeStyle;
+        break;
       default:
+        ctx.fillStyle = "black";  // Error
+        ctx.strokeStyle = "black";  // Error
         break;
     }
     ctx.globalAlpha = 0.2;
@@ -349,6 +366,80 @@ function draw() {
 
 }
 
+function formatTimeInterval(date1, date2) {
+  let diffMs = Math.abs(date2 - date1);
+
+  let totalSeconds = Math.floor(diffMs / 1000);
+  let hours = Math.floor(totalSeconds / 3600);
+  let minutes = Math.floor((totalSeconds % 3600) / 60);
+  let seconds = totalSeconds % 60;
+  let deciseconds = Math.floor((diffMs % 1000) / 100);
+
+  const pad = (num) => String(num).padStart(2, '0');
+
+  if (hours > 0) {
+    return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+    //return `${hours}:${pad(minutes)}:${pad(seconds)}.${deciseconds}`;
+  } else {
+    return `${pad(minutes)}:${pad(seconds)}`;
+    //return `${pad(minutes)}:${pad(seconds)}.${deciseconds}`;
+  }
+}
+
+function updateTimer() {
+  const timerElement = document.getElementById("timer");
+  setInterval(() => {
+    if (quizStarted)
+      endTime = new Date();
+    timerElement.textContent = formatTimeInterval(startTime, endTime);
+  }, 100);
+}
+
+
+function showConfirm(message, onConfirm) {
+  const overlay = document.getElementById("confirmOverlay");
+  const box = document.getElementById("confirmBox");
+  box.querySelector("p").textContent = message;
+
+  overlay.style.display = "flex";
+
+  function cleanup() {
+    overlay.style.display = "none";
+    readyBtn.removeEventListener("click", confirmHandler);
+    cancelBtn.removeEventListener("click", cancelHandler);
+  }
+  const readyBtn = document.getElementById("confirmReady");
+  const cancelBtn = document.getElementById("confirmCancel");
+
+  function confirmHandler() {
+    cleanup();
+    onConfirm(true);
+  }
+  function cancelHandler() {
+    cleanup();
+    onConfirm(false);
+  }
+
+  readyBtn.addEventListener("click", confirmHandler);
+  cancelBtn.addEventListener("click", cancelHandler);
+}
+
+function restartQuiz() {
+  draw();
+  showConfirm("Prepare to start...", function(confirmed) {
+    if (!confirmed) return;
+    isZoneClicked = {};
+    for (const name of Object.keys(labelPositions))
+      isZoneClicked[name] = false;
+    remainingZones = Object.keys(labelPositions);
+    setNextZoneToGuess();
+    updateScore();
+    draw();
+    startTime = new Date();
+    quizStarted = true;
+  });
+}
+
 mapImage.onload = () => {
   imageLoaded = true;
 
@@ -358,7 +449,10 @@ mapImage.onload = () => {
 
   if (regionsLoaded) {
     loading.style.display = "none";
-    draw();
+    if (!quizStarted)
+      restartQuiz();
+    else
+      draw();
   }
 };
 
@@ -369,7 +463,10 @@ fetch("zones-bounds-pixels.txt")
     regionsLoaded = true;
     if (imageLoaded) {
       loading.style.display = "none";
-      draw();
+      if (!quizStarted)
+        restartQuiz();
+      else
+        draw();
     }
   });
 
@@ -465,14 +562,21 @@ canvas.addEventListener("mouseup", () => {
       if (name == zoneToGuess) {
         if (zoneRevealed) {
           isZoneClicked[name] = "revealed";
-          if (!showNames)
-            zoneRevealed = false;
+          showNames = false;
+          zoneRevealed = false;
+          toggleNamesCheckbox.checked = false;
         }
-        else
+        else if (firstTry)
           isZoneClicked[name] = "correct";
+        else {
+          firstTry = true;
+          isZoneClicked[name] = "correctNotFirst";
+        }
+          
         setNextZoneToGuess();
       }
       else if (!isZoneClicked[name]) {
+        firstTry = false;
         isZoneClicked[name] = "wrong";
         removeZoneToGuess(name);
       }
@@ -487,9 +591,6 @@ canvas.addEventListener("mouseleave", () => {
   isClicked = false;
   isDragging = false;
 });
-
-const toggleNamesCheckbox = document.getElementById("toggleNamesCheckbox");
-const mapRadioButtons = document.querySelectorAll('input[name="map"]');
 
 toggleNamesCheckbox.addEventListener("change", () => {
   showNames = toggleNamesCheckbox.checked;
@@ -510,5 +611,7 @@ mapRadioButtons.forEach(radio => {
     }
   });
 });
+
+window.addEventListener("DOMContentLoaded", updateTimer);
 
 resizeCanvas();
