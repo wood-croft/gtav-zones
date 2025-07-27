@@ -311,6 +311,7 @@ canvas.addEventListener("wheel", (e) => {
 
 // Drag to pan
 canvas.addEventListener("mousedown", (e) => {
+  e.preventDefault();
   isDragging = true;
   dragStart = { x: e.clientX, y: e.clientY };
 });
@@ -351,7 +352,12 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("mouseup", () => {
   isDragging = false;
 });
+
 canvas.addEventListener("mouseleave", () => {
+  isDragging = false;
+});
+
+window.addEventListener("blur", () => {
   isDragging = false;
 });
 
