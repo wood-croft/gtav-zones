@@ -529,6 +529,7 @@ canvas.addEventListener("wheel", (e) => {
 });
 
 canvas.addEventListener("mousedown", (e) => {
+  e.preventDefault();
   isClicked = true;
   dragStart = { x: e.clientX, y: e.clientY };
   if (canvas.style.cursor == "grab")
@@ -623,7 +624,13 @@ canvas.addEventListener("mouseup", () => {
   }
   draw();
 });
+
 canvas.addEventListener("mouseleave", () => {
+  isClicked = false;
+  isDragging = false;
+});
+
+window.addEventListener("blur", () => {
   isClicked = false;
   isDragging = false;
 });
