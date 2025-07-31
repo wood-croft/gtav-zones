@@ -1,5 +1,5 @@
 let quizStarted = false;
-let isFirstTime = true;
+let isFirstLoad = true;
 
 const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
@@ -17,6 +17,7 @@ const mapRadioButtons = document.querySelectorAll('input[name="map"]');
 
 let dynamicFont = true;
 let scale = 0.30; // Initial zoom level
+const ZOOM_FACTOR = 1.2;
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
 let offsetX = 0; // Will be centered later
@@ -422,7 +423,7 @@ function showConfirm(message, onConfirm) {
   const cancelBtn = document.getElementById("confirmCancel");
 
   // Only show Cancel button if not the first time
-  cancelBtn.style.display = isFirstTime ? "none" : "inline-block";
+  cancelBtn.style.display = isFirstLoad ? "none" : "inline-block";
 
   overlay.style.display = "flex";
 
@@ -434,7 +435,7 @@ function showConfirm(message, onConfirm) {
 
   function confirmHandler() {
     cleanup();
-    isFirstTime = false; // mark that we've shown it once
+    isFirstLoad = false; // mark that we've shown it once
     onConfirm(true);
   }
 
@@ -468,13 +469,16 @@ mapImage.onload = () => {
   imageLoaded = true;
 
   // Center the image initially
-  offsetX = (canvas.width - mapImage.width * scale) / 2;
-  offsetY = (canvas.height - mapImage.height * scale) / 2;
+  if (isFirstLoad) {
+    offsetX = (canvas.width - mapImage.width * scale) / 2;
+    offsetY = (canvas.height - mapImage.height * scale) / 2;
+    // isFirstLoad will be turned off by the Ready button
+  }
 
   if (regionsLoaded) {
     loading.style.display = "none";
     changeCursor("grab");
-    if (isFirstTime && !quizStarted)
+    if (isFirstLoad && !quizStarted)
       restartQuiz();
     else
       draw();
@@ -489,7 +493,7 @@ fetch("zones-bounds-pixels.txt")
     if (imageLoaded) {
       loading.style.display = "none";
       changeCursor("grab");
-      if (isFirstTime && !quizStarted)
+      if (isFirstLoad && !quizStarted)
         restartQuiz();
       else
         draw();
@@ -505,7 +509,7 @@ canvas.addEventListener("wheel", (e) => {
   const worldX = (mouseX - offsetX) / scale;
   const worldY = (mouseY - offsetY) / scale;
 
-  const zoomFactor = e.deltaY > 0 ? 1/1.2 : 1.2;
+  const zoomFactor = e.deltaY > 0 ? 1/ZOOM_FACTOR : ZOOM_FACTOR;
   const newScale = scale * zoomFactor;
 
   if (newScale >= MIN_ZOOM && newScale <= MAX_ZOOM) {
