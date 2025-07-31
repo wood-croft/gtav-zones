@@ -1,3 +1,4 @@
+let isFirstLoad = true;
 const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -11,6 +12,7 @@ document.body.style.backgroundColor = mapBackgrounds[currentMapIndex];
 
 let dynamicFont = true;
 let scale = 0.30; // Initial zoom level
+const ZOOM_FACTOR = 1.2;
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 3;
 let offsetX = 0; // Will be centered later
@@ -256,8 +258,11 @@ mapImage.onload = () => {
   imageLoaded = true;
 
   // Center the image initially
-  offsetX = (canvas.width - mapImage.width * scale) / 2;
-  offsetY = (canvas.height - mapImage.height * scale) / 2;
+  if (isFirstLoad) {
+    offsetX = (canvas.width - mapImage.width * scale) / 2;
+    offsetY = (canvas.height - mapImage.height * scale) / 2;
+    isFirstLoad = false;
+  }
 
   if (regionsLoaded) {
     loading.style.display = "none";
@@ -285,7 +290,7 @@ canvas.addEventListener("wheel", (e) => {
   const worldX = (mouseX - offsetX) / scale;
   const worldY = (mouseY - offsetY) / scale;
 
-  const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+  const zoomFactor = e.deltaY > 0 ? 1 / ZOOM_FACTOR : ZOOM_FACTOR;
   const newScale = scale * zoomFactor;
 
   if (newScale >= MIN_ZOOM && newScale <= MAX_ZOOM) {
