@@ -452,6 +452,7 @@ function restartQuiz() {
   draw();
   showConfirm("Prepare to start...", function(confirmed) {
     if (!confirmed) return;
+    firstTry = true;
     toggleNamesCheckbox.checked = false;
     isZoneClicked = {};
     for (const name of Object.keys(labelPositions))
@@ -667,3 +668,4 @@ mapRadioButtons.forEach(radio => {
 window.addEventListener("DOMContentLoaded", updateTimer);
 
 resizeCanvas();
+
